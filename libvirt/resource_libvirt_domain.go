@@ -242,6 +242,11 @@ func resourceLibvirtDomain() *schema.Resource {
 							Optional: true,
 							Default:  "none",
 						},
+						"listen_address": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Default:  "127.0.0.1",
+						},
 					},
 				},
 			},
