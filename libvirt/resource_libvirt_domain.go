@@ -355,6 +355,27 @@ func resourceLibvirtDomain() *schema.Resource {
 				Default:  false,
 				ForceNew: false,
 			},
+			"rng": {
+				Type:     schema.TypeList,
+				MaxItems: 1,
+				Optional: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"model": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Required: false,
+							Default:  "virtio",
+						},
+						"device": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Required: false,
+							Default:  "/dev/urandom",
+						},
+					},
+				},
+			},
 			"xml": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -443,6 +464,7 @@ func resourceLibvirtDomainCreate(d *schema.ResourceData, meta interface{}) error
 	setCmdlineArgs(d, &domainDef)
 	setFirmware(d, &domainDef)
 	setBootDevices(d, &domainDef)
+	setRngDevice(d, &domainDef)
 
 	if err := setCoreOSIgnition(d, &domainDef); err != nil {
 		return err

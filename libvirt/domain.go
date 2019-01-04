@@ -725,6 +725,24 @@ func setNetworkInterfaces(d *schema.ResourceData, domainDef *libvirtxml.Domain,
 	return nil
 }
 
+func setRngDevice(d *schema.ResourceData, domainDef *libvirtxml.Domain) error {
+	prefix := "rng.0"
+	if _, ok := d.GetOk(prefix); ok {
+		rngDevice := d.Get(prefix + ".device").(string)
+		domainDef.Devices.RNGs = []libvirtxml.DomainRNG{
+			{
+				Model: d.Get(prefix + ".model").(string),
+				Backend: &libvirtxml.DomainRNGBackend{
+					Random: &libvirtxml.DomainRNGBackendRandom{
+						Device: rngDevice,
+					},
+				},
+			},
+		}
+	}
+	return nil
+}
+
 func destroyDomainByUserRequest(d *schema.ResourceData, domain *libvirt.Domain) error {
 	if d.Get("running").(bool) {
 		return nil
