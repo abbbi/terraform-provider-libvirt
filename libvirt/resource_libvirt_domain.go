@@ -154,6 +154,11 @@ func resourceLibvirtDomain() *schema.Resource {
 							Optional: true,
 							Default:  false,
 						},
+						"sata": {
+							Type:     schema.TypeBool,
+							Optional: true,
+							Default:  false,
+						},
 						"wwn": {
 							Type:     schema.TypeString,
 							Optional: true,

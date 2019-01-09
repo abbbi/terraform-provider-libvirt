@@ -405,10 +405,15 @@ func setConsoles(d *schema.ResourceData, domainDef *libvirtxml.Domain) {
 
 func setDisks(d *schema.ResourceData, domainDef *libvirtxml.Domain, virConn *libvirt.Connect) error {
 	var scsiDisk = false
+	var sataDisk = false
 	for i := 0; i < d.Get("disk.#").(int); i++ {
 		disk := newDefDisk(i)
 
 		prefix := fmt.Sprintf("disk.%d", i)
+		if d.Get(prefix + ".sata").(bool) {
+			disk.Target.Bus = "sata"
+			sataDisk = true
+		}
 		if d.Get(prefix + ".scsi").(bool) {
 			disk.Target.Bus = "scsi"
 			scsiDisk = true
@@ -528,6 +533,13 @@ func setDisks(d *schema.ResourceData, domainDef *libvirtxml.Domain, virConn *lib
 			libvirtxml.DomainController{
 				Type:  "scsi",
 				Model: "virtio-scsi",
+			})
+	}
+	if sataDisk {
+		domainDef.Devices.Controllers = append(domainDef.Devices.Controllers,
+			libvirtxml.DomainController{
+				Type: "sata",
+				//Model: "sata",
 			})
 	}
 
